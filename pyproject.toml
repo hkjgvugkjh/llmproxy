@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llmproxy"
+version = "1.0.0"
+description = "OpenAI-compatible LLM reverse proxy with real-time conversation analytics"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "william", email = "william@example.com"},
+]
+keywords = ["llm", "proxy", "openai", "api", "analytics", "chatbot"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "fastapi>=0.110",
+    "httpx>=0.27",
+    "uvicorn[standard]>=0.29",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.0",
+    "twine>=5.0",
+]
+
+[project.scripts]
+llmproxy = "llmproxy.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/hkjgvugkjh/llmproxy"
+Repository = "https://github.com/hkjgvugkjh/llmproxy"
+Issues = "https://github.com/hkjgvugkjh/llmproxy/issues"
+
+[tool.setuptools.packages.find]
+include = ["llmproxy*"]
+exclude = ["tests*", "logs*", "reports*"]

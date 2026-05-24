@@ -13,7 +13,34 @@ OpenAI 兼容的 LLM 反向代理，支持多模型路由、请求日志记录�
   - Token 用量
 - **流式响应支持**：边转发边收集，不改变流式行为
 - **并发安全**：多请求并发写入报告时自动加锁
-- **独立日志分析工具**：`analyze_logs.py` 支持对历史日志做离线分析和统计
+- **独立日志分析工具**：`llmproxy-analyze` 命令行工具，支持对历史日志做离线分析和统计
+
+## 安装
+
+### 方式一：从 PyPI 安装（推荐）
+
+```bash
+pip install llmproxy-withlog
+```
+
+安装后可直接使用 `llmproxy` 命令启动服务：
+
+```bash
+# 查看帮助
+llmproxy --help
+
+# 启动服务（需提前准备好 config.ini）
+llmproxy --config /path/to/config.ini
+```
+
+### 方式二：从源码安装
+
+```bash
+git clone https://github.com/hkjgvugkjh/llmproxy.git
+cd llmproxy
+pip install -r requirements.txt
+python -m llmproxy
+```
 
 ## 环境要求
 
@@ -22,13 +49,7 @@ OpenAI 兼容的 LLM 反向代理，支持多模型路由、请求日志记录�
 
 ## 快速开始
 
-### 1. 安装依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-### 2. 配置
+### 1. 配置
 
 编辑 `config.ini`，填入你的上游 LLM 信息：
 
@@ -44,11 +65,14 @@ port = 8000
 proxy_api_key = my-secret-key   # 可选，留空不校验
 ```
 
-### 3. 启动
+### 2. 启动
 
 ```bash
-# 前台启动
-python3 llm_proxy.py
+# PyPI 安装后直接运行
+llmproxy --config config.ini
+
+# 或前台启动（源码方式）
+python -m llmproxy --config config.ini
 
 # 后台启动
 ./start.sh
@@ -58,7 +82,7 @@ sudo cp llmproxy.service /etc/systemd/system/
 sudo systemctl enable --now llmproxy
 ```
 
-### 4. 调用示例
+### 3. 调用示例
 
 ```bash
 # 列出可用模型
@@ -85,10 +109,14 @@ curl -s http://localhost:8000/v1/chat/completions \
 
 ```
 llmproxy/
-├── llm_proxy.py          # 主程序（代理 + 实时报告）
-├── analyze_logs.py       # 离线日志分析工具
-├── daily_analyze.sh      # 每日分析定时脚本
+├── llmproxy/             # 核心包
+│   ├── __init__.py
+│   ├── __main__.py       # python -m llmproxy 入口
+│   ├── server.py         # FastAPI 代理服务器
+│   ├── analyzer.py       # 日志分析模块
+│   └── cli.py            # 命令行入口
 ├── config.ini            # 配置文件（需自行填写）
+├── pyproject.toml        # 包构建配置
 ├── requirements.txt      # Python 依赖
 ├── start.sh              # 后台启动脚本
 ├── llmproxy.service      # systemd 服务文件
@@ -101,20 +129,23 @@ llmproxy/
 
 ## 日志分析工具
 
-`analyze_logs.py` 支持对历史日志做离线分析：
+安装后可使用 `llmproxy-analyze` 命令行工具，或直接运行 `llmproxy.analyzer` 模块：
 
 ```bash
-# 分析指定文件，输出文本报告
-python3 analyze_logs.py logs/20260523.log --only-user
+# PyPI 安装后
+llmproxy-analyze logs/20260523.log --only-user
+
+# 源码方式
+python -m llmproxy.analyzer logs/20260523.log --only-user
 
 # 输出 JSON 格式
-python3 analyze_logs.py logs/20260523.log --format json -o result.json
+llmproxy-analyze logs/20260523.log --format json -o result.json
 
 # 仅统计信息
-python3 analyze_logs.py logs/20260523.log --stats
+llmproxy-analyze logs/20260523.log --stats
 
 # 分析所有日志
-python3 analyze_logs.py --all --stats
+llmproxy-analyze --all --stats
 ```
 
 ## 报告格式示例

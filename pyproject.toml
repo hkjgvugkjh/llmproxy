@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "llmproxy"
+name = "llmproxy-withlog"
 version = "1.0.0"
 description = "OpenAI-compatible LLM reverse proxy with real-time conversation analytics"
 readme = "README.md"
@@ -40,6 +40,7 @@ dev = [
 
 [project.scripts]
 llmproxy = "llmproxy.cli:main"
+llmproxy-analyze = "llmproxy.analyzer:main"
 
 [project.urls]
 Homepage = "https://github.com/hkjgvugkjh/llmproxy"

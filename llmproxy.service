@@ -1,0 +1,24 @@
+[Unit]
+Description=LLM Proxy - OpenAI-compatible LLM reverse proxy with analytics
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+Group=__USER__
+WorkingDirectory=__WORKDIR__
+ExecStart=__PYTHON__ __WORKDIR__/llm_proxy.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:__WORKDIR__/server.log
+StandardError=append:__WORKDIR__/server.log
+
+# 安全加固
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=__WORKDIR__/__LOGDIR__ __WORKDIR__/__REPORTDIR__
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
